@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.apk
+build/
+.vscode/
+bin/
+*/cache/
+.vscode/
+cache/
+.st**
+kivyrt
+kivymd
+mapview
+*~
+*.swp
+*/storage.json

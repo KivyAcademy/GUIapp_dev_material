@@ -1,0 +1,3 @@
+conda env export -n kivy4app_dev --no-builds  > environment.yaml
+
+

@@ -1,0 +1,35 @@
+<Square>
+	size_hint: None, None
+	size: [app.square_size] * 2
+	pos: [self.coord[x] * app.square_size for x in range(2)]
+	bgcolor: 1, 1, 1, 1
+	canvas:
+		Color
+			rgba: self.bgcolor
+		Rectangle
+			size: self.size
+			pos: self.pos
+
+<FruitSquare>
+	bgcolor: 0, 1, 0, 1
+	coord: app.fruit
+
+
+BoxLayout
+	orientation: 'vertical'
+	Slider
+		value: app.square_value
+		on_value: app.square_value = self.value
+		step: 1
+		range: 5, 50
+		size_hint_y: None
+		height: sp(40)
+	FloatLayout
+		id: playground
+		canvas:
+			Color
+				rgba: 1, 0, 0, app.alpha
+			Rectangle
+				size: self.size
+				pos: self.pos
+
