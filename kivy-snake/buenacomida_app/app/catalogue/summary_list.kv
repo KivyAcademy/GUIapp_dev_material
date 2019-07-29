@@ -1,0 +1,471 @@
+#:import Animation kivy.animation.Animation
+#:import catalogue_interface catalogue.interface
+
+<SummaryList>
+	mainroute: app.mainroute
+    _calc_height: self.max_height * hidebox.height_alpha
+    height: max(self._calc_height, closed_box.minimum_height)
+    _is_open: self._calc_height > closed_box.minimum_height
+    size_hint_y: None
+    orientation: 'vertical'
+    canvas:
+		Color
+			rgba: colors.grey500
+		Rectangle
+			pos: self.x, self.top
+			size: self.width, dp(1)
+    ScreenManager
+        id: sm
+        transition: root._screenmanager_transition
+        Screen
+            opacity: (not root._is_open) * 1
+            name: 'closed'
+            BoxLayout
+                id: closed_box
+                orientation: 'vertical'
+                ButtonBoxLayout
+                    size_hint_y: None
+                    height: sp(60)
+                    orientation: 'vertical'
+                    padding: dp(8)
+					on_release: sm_hidebox.current = 'summary'
+					on_release: root.open()
+                    MDLabel
+                        text: root.show_text
+                        font_style: 'Subhead'
+						color: colors.grey700
+				Separator
+                ExtraRecycleView
+                    opacity: 1 * (not root._is_open)
+                    _extra_kwargs: root._extra_kwargs
+					pre_data: [catalogue_interface.quickview_presenter((app.restaurants.cache).get(root.current_key))] if root.current_key else []
+                    size_hint_y: None
+                    height: rv_2._anim_height
+                    RecycleGridLayout
+                        id: rv_2
+                        cols: 1
+                        _anim_height: 0
+                        on_minimum_height: Animation(_anim_height=self.minimum_height, d=root._anim_duration).start(self)
+                        viewclass: 'RestaurantSummary'
+                        default_size_hint: root.default_size_hint
+                        default_size: root.default_size
+        Screen
+            opacity: root._is_open * 1
+            name: 'open'
+            HideBox
+                scroll: rv_summary if sm_hidebox.current == 'summary' else detail.scroll
+                id: hidebox
+                ScreenManager
+					id: sm_hidebox
+                    Screen
+                        name: 'summary'
+						BackgroundTexture
+						BoxLayout
+							padding: dp(40)
+							spacing: dp(12)
+							orientation: 'vertical'
+							opacity: (not root.data) * 1
+							Image
+								size_hint_y: None
+								height: self.width
+								source: 'res/empty_search.png'
+								allow_stretch: True
+							GVMDLabel
+								font_style: 'Headline'
+								text: app.translator.translate('empty_search1')
+								halign: 'center'
+							GVMDLabel
+								font_style: 'Subhead'
+								text: app.translator.translate('empty_search2')
+								color: colors.grey700
+								halign: 'center'
+							Widget
+						BoxLayout
+							orientation: 'vertical'
+							# BgBoxLayout
+								# size_hint_y: None
+								# height: sp(50)
+								# bgcolor: colors.white
+								# BoxLayout
+									# padding: dp(6), dp(8)
+									# MDLabel
+										# text: app.translator.translate('sort_by')
+										# font_size: sp(16)
+										# size_hint_x: .6
+										# color: colors.grey700
+									# BgBoxLayout
+										# bg_radius: [dp(4)]
+										# bgcolor: colors.grey300
+										# padding: dp(2)
+										# spacing: dp(2)
+										# PriceButton
+											# group: 'sort'
+											# bg_radius: [dp(2), 0, 0, dp(2)]
+											# state: 'down'
+											# text: app.translator.translate('rating').capitalize()
+										# PriceButton
+											# group: 'sort'
+											# bg_radius: [0, dp(2), dp(2), 0]
+											# text: app.translator.translate('name').capitalize()
+							Separator
+							ExtraRecycleView
+								pre_data:
+									[catalogue_interface.quickview_presenter(data)
+									for data in root.data]
+								_extra_kwargs: root._extra_kwargs
+								id: rv_summary
+								RecycleGridLayout
+									cols: 1
+									size_hint_y: None
+									height: self.minimum_height + dp(80)
+									viewclass: 'RestaurantSummary'
+									default_size_hint: root.default_size_hint
+									default_size: root.default_size
+                    Screen
+                        name: 'detail'
+						BackgroundTexture
+						RestaurantDetail
+							id: detail
+							summary_list: root
+							data: catalogue_interface.detail_interface((app.restaurants.cache)[root.detail_key]) if root.detail_key else {}
+	NoFloatLayout
+		MDFloatingActionButton
+			id: fab
+			right: root.right - dp(20)
+			icon: 'map'
+			top: hidebox.height_alpha * sp(80)
+			md_bg_color: app.theme_cls.primary_color
+			background_palette: 'Primary'
+			on_release: root.close()
+
+<RestaurantMarker>
+	-size: sp(40), sp(50)
+	mipmap: True
+	on_release: self.callback(self.key)
+
+<ShowcaseImage@AsyncImage>
+	allow_stretch: True
+	size_hint: (None, 1) if self.orientation == 'landscape' else (1, None)
+	orientation: 'portrait' if self.image_ratio > 1 else 'landscape'
+	width: self.height * self.image_ratio
+	height: self.width / (float(self.image_ratio) or 1)
+	pos_hint: {'center_x': .5, 'center_y': .5}
+
+<SubscribeImage@Label>
+	text: 'hi friends'
+	color: colors.black
+
+<RestaurantDetail>
+	on_key: app.comments.key_query('restaurant', self.key)
+	on_key:
+		comment_section.current = 'loading'
+		app.comments.getmine(
+		on_finished=lambda *args: setattr(comment_section, 'current', 'comments'))
+	favorite: self.key in (app.user.cache).get('favorites', [])
+	scroll: scroll
+	ScrollView
+		id: scroll
+		HeightlessBox
+			height: self.minimum_height + dp(80)
+			HeightlessBox
+				bgcolor: colors.white
+				DataCarousel
+					id: carousel
+					data:
+						[{'source': source} for source in root.images]
+					viewclass: 'ShowcaseImage'
+					size_hint_y: None
+					height: root.width / gratio
+				HeightlessBox
+					bgcolor: app.theme_cls.primary_color
+					padding: dp(12), dp(12)
+					spacing: dp(8)
+					GVMDLabel
+						text: root.name
+						color: colors.white
+						font_style: 'Headline'
+					BoxLayout
+						size_hint_y: None
+						height: sp(12)
+						spacing: dp(4)
+						GHMDLabel
+							text: root.rating
+							font_style: 'Subhead'
+							color: colors.white
+						GHMDLabel
+							font_style: 'Subhead'
+							font_name: 'Icons'
+							color: colors.white
+							text: root.stars
+					GVMDLabel
+						text: root.description
+						color: colors.white
+						font_style: 'Body1'
+				BoxLayout
+					padding: dp(8)
+					height: sp(50) + self.padding[1] * 2
+					size_hint_y: None
+					DetailActionButton
+						icon: 'star' if root.favorite else 'star-outline'
+						text: app.translator.translate('is_favorite' if root.favorite else 'make_favorite').upper()
+						on_release: root.add_or_remove_from_favorites() if app.user.cache else app.notify(app.translator.translate('login_to_favorite'))
+					DetailActionButton
+						icon: 'phone'
+						text: app.translator.translate('call').upper()
+						disabled: not bool(root.phone_number)
+						on_release: open_link(root.phone_number)
+					DetailActionButton
+						icon: 'earth'
+						text: app.translator.translate('website').upper()
+						disabled: not bool(root.website)
+						on_release: open_link(root.website)
+					DetailActionButton
+						icon: 'share-variant'
+						text: app.translator.translate('share').upper()
+				Separator
+				DetailActionBar
+					icon: 'tag-multiple'
+					text: root.tags
+				DetailActionBar
+					icon: 'map-marker'
+					text: root.address
+				DetailActionBar
+					icon: 'phone'
+					text: root.phone_number
+					on_release: open_link(self.text)
+				CommentSection
+					id: comment_section
+					restaurant_key: root.key
+			Widget
+			NoFloatLayout
+				ButtonBoxLayout
+					padding: dp(20)
+					size_hint: None, None
+					size: [0, 0] if root.images else carousel.size
+					opacity: 1 * (not root.images)
+					pos: carousel.pos
+					Image:
+						source: 'res/beta_icon.png'
+
+
+<CommentSection>
+	size_hint_y: None
+	height: commentbox.height if self.current == 'comments' else dp(80)
+	your_comment:
+		([comment for comment in (app.comments.mine).values()
+		if comment['restaurant'] == self.restaurant_key] + [{}])[0]
+	Screen
+		name: 'comments'
+		HeightlessBox
+			id: commentbox
+			DataBox
+				data:
+					[catalogue_interface.comment_interface(root.your_comment)] if root.your_comment else [{'key': root.restaurant_key}]
+				viewclass: 'LoginToRate' if not app.user.cache else ('YourComment' if root.your_comment else 'MakeComment')
+				size_hint_y: None
+				height: self.minimum_height
+			Separator
+			DataBox
+				bgcolor: colors.grey300
+				spacing: dp(2)
+				size_hint_y: None
+				height: self.minimum_height
+				viewclass: 'Comment'
+				orientation: 'vertical'
+				opacity: 1 * bool(self.data)
+				data:
+					[catalogue_interface.comment_interface(comment)
+					for comment in (app.comments.query_results).values()
+					if comment != root.your_comment]
+	Screen
+		name: 'loading'
+		BoxLayout
+			padding: dp(12)
+			Loading
+
+
+<LoginToRate@RectangularButtonBoxLayout>
+    size_hint_y: None
+    height: self.minimum_height
+    padding: dp(16)
+    on_release: app.route = 'owner/login'
+    GVMDLabel
+        text: app.translator.translate('login_to_rate')
+		halign: 'center'
+		valign: 'center'
+		font_style: 'Subhead'
+		color: app.theme_cls.primary_color
+
+<MakeComment>
+	size_hint_y: None
+	orientation: 'vertical'
+	height: self.minimum_height
+    padding: dp(16)
+	spacing: dp(8)
+	data:
+		{'rating': slider.value,
+		'owner': (app.user.cache).get('id', ''),
+		'text': text.text,
+		'restaurant': root.key}
+	on_execute:
+		self.disabled = True
+		app.comments.post(self.processed,
+		on_finished=lambda *args: setattr(self, 'disabled', False))
+	GVMDLabel
+		font_style: 'Subhead'
+		text: app.translator.translate('make_comment')
+		halign: 'center'
+	RatingSlider
+		id: slider
+		size_hint: .6, None
+		height: sp(40)
+		font_size: sp(40)
+	MDTextField
+		id: text
+		multiline: True
+		hint_text: app.translator.translate('your_opinion')
+	MDRaisedButton
+		text: app.translator.translate('submit')
+		pos_hint: {'right': 1}
+		on_release: root.trigger()
+		disabled: not slider.value or not text.text
+
+<Comment>
+	bgcolor: colors.white
+	size_hint_y: None
+	height: self.minimum_height
+	padding: dp(16)
+	spacing: dp(8)
+	HeightlessBox
+		spacing: dp(8)
+		GVMDLabel
+			text: root.your_text
+			font_style: 'Body2'
+		GVMDLabel
+			text: root.commenter
+			font_style: 'Body2'
+		HeightlessBox
+			orientation: 'horizontal'
+			spacing: dp(8)
+			GHMDLabel
+				text: root.stars
+				font_name: 'Icons'
+				color: app.theme_cls.primary_color
+			GVMDLabel
+				text: root.created
+		GVMDLabel
+			text: root.text
+			font_style: 'Body1'
+
+<YourComment>
+	your_text: app.translator.translate('your_opinion')
+	IconButton
+		size_hint: None, None
+		size: sp(40), sp(40)
+		pos_hint: {'top': 1}
+		color: app.theme_cls.primary_color
+		icon: 'close'
+		on_release: app.comments.delete(root.key)
+
+<DetailActionButton@CircularButtonBoxLayout>
+	orientation: 'vertical'
+	color: app.theme_cls.primary_color
+	icon: 'star'
+	text: ''
+	opacity: 1 * (not self.disabled)
+	size_hint_x: 1  if not self.disabled else .01
+	IconLabel
+		font_name: 'Icons'
+		icon: root.icon
+		font_size: sp(28)
+		color: root.color
+		valign: 'center'
+		halign: 'center'
+	GVMDLabel
+		text: root.text
+		font_style: 'Body2'
+		color: root.color
+		halign: 'center'
+
+<DetailActionBar@RectangularButtonBoxLayout>
+	color: app.theme_cls.primary_color
+	text_color: colors.black
+	padding: dp(12)
+	spacing: dp(18)
+	size_hint_y: None
+	disabled: not bool(self.text)
+	height: self.minimum_height * (not self.disabled)
+	opacity: 1 * (not self.disabled)
+	text: ''
+	icon: ''
+	canvas.before:
+		Color
+			rgba: colors.grey300
+		Rectangle
+			pos: self.pos
+			size: self.width, dp(1)
+	IconLabel
+		size_hint_x: .1
+		font_name: 'Icons'
+		icon: root.icon
+		font_size: sp(20)
+		color: root.color
+		valign: 'center'
+		halign: 'center'
+	GVMDLabel
+		text: root.text
+		color: root.text_color
+	
+
+<RestaurantSummary>
+	bgcolor: colors.white
+	on_release: self.callback(self.key)
+	padding: dp(6)
+	spacing: dp(2)
+	canvas:
+		Color
+			rgba: colors.grey300
+		Rectangle
+			pos: self.x, self.y
+			size: self.width, dp(1)
+	BoxLayout
+		spacing: dp(4)
+		orientation: 'vertical'
+		GVMDLabel
+			font_style: 'Subhead'
+			text: root.name
+		BoxLayout
+			size_hint_y: None
+			height: sp(12)
+			spacing: dp(4)
+			GHMDLabel
+				font_style: 'Subhead'
+				text: root.rating
+				color: app.theme_cls.primary_color
+			GHMDLabel
+				font_style: 'Subhead'
+				color: app.theme_cls.primary_color
+				font_name: 'Icons'
+				text: root.stars
+			GHMDLabel
+				font_style: 'Subhead'
+				color: app.theme_cls.primary_color
+				text: u'\u2022'
+			MDLabel
+				font_style: 'Subhead'
+				color: app.theme_cls.primary_color
+				text: root.price
+		GVMDLabel
+			text: root.tags
+			color: colors.grey600
+		GVMDLabel
+			text: root.address
+			color: colors.grey600
+			markup: True
+			shorten: True
+		Widget
+	AsyncImage
+		size_hint_x: .2
+		source: root.thumbnail
+		mipmap: True
+

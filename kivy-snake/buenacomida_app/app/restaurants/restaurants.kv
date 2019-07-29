@@ -1,0 +1,129 @@
+# -*- coding: utf-8 -*-
+
+<TextInput>
+	write_tab: False
+
+<FormLabel@GVMDLabel>
+	font_style: 'Headline'
+	color: colors.grey700
+
+<RestaurantCapture>
+	ScrollView
+		HeightlessBox
+			height: self.minimum_height + dp(80)
+			orientation: 'vertical'
+			padding: dp(12)
+			spacing: dp(12)
+			GVMDCard
+				FormLabel
+					text: app.translator.translate('description')
+				MDTextField
+					hint_text: app.translator.translate('name')
+					max_text_length: 20
+				MDTextField
+					hint_text: app.translator.translate('description') + app.translator.translate('optional')
+					max_text_length: 50
+					multiline: True
+				PriceCapture
+			TagCapture
+			LocationCapture
+			GVMDCard
+				FormLabel
+					text: app.translator.translate('contact') + app.translator.translate('optional')
+				MDTextField
+					hint_text: app.translator.translate('website')
+				MDTextField
+					hint_text: app.translator.translate('phone_number')
+			GVMDCard
+				FormLabel
+					text: app.translator.translate('images') + app.translator.translate('optional')
+				GVMDLabel
+					font_style: 'Body1'
+					color: colors.grey700
+					text: app.translator.translate('add_image_urls')
+			Widget
+				
+
+<GVMDCard@MDCard>
+	size_hint_y: None
+	height: self.minimum_height
+	orientation: 'vertical'
+	padding: dp(16)
+	spacing: dp(12)
+
+<LocationCapture>
+	FormLabel
+		text: app.translator.translate('location')
+	MDTextField
+		hint_text: app.translator.translate('address')
+		multiline: True
+		write_tab: False
+	MapView
+		disabled: True
+		id: map_
+		size_hint_y: None
+		height: sp(120)
+		zoom: 15
+		RestaurantMarker
+			source: 'res/logo.png'
+			lat: app.location[0]
+			lon: app.location[1]
+
+<PriceCapture>
+	spacing: dp(8)
+	price_range: max(self._price_range)
+	_price_range:
+		[pb1.value if pb1.state == 'down' else 0,
+		pb2.value if pb2.state == 'down' else 0,
+		pb3.value if pb3.state == 'down' else 0,
+		pb4.value if pb4.state == 'down' else 0]
+	GVMDLabel
+		font_style: 'Body1'
+		color: colors.grey700
+		text: app.translator.translate('price_capture') + app.translator.translate('optional')
+	HeightlessBox
+		bgcolor: colors.grey300
+		orientation: 'horizontal'
+		spacing: dp(2)
+		padding: dp(2)
+		PriceButton
+			id: pb1
+			group: 'price_capture'
+			bg_radius: [dp(2), 0, 0, dp(2)]
+			text: '$'
+			value: 1
+		PriceButton
+			id: pb2
+			group: 'price_capture'
+			text: '$$'
+			value: 2
+		PriceButton
+			id: pb3
+			group: 'price_capture'
+			text: '$$$'
+			value: 3
+		PriceButton
+			id: pb4
+			group: 'price_capture'
+			bg_radius: [0, dp(2), dp(2), 0]
+			text: '$$$$'
+			value: 4
+
+<TagCapture>
+	FormLabel
+		text: app.translator.translate('tags')
+	GVMDLabel
+		font_style: 'Body1'
+		color: colors.grey700
+		text: app.translator.translate('select_tags')
+	TagSelector
+		on_selected: self.selected = self.selected[-3:]
+
+<UrlCapture>
+	FormLabel
+		text: app.translator.translate('images')
+	GVMDLabel
+		font_style: 'Body1'
+		color: colors.grey700
+		text: app.translator.translate('add_image_urls')
+	

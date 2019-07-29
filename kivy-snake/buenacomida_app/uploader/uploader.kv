@@ -1,0 +1,68 @@
+BoxLayout
+	BoxLayout
+		orientation: 'vertical'
+		size_hint_x: .3
+		TextInput
+			id: usuario
+			write_tab: False
+		TextInput
+			id: password
+			on_text_validate: login_button.func()
+			write_tab: False
+			multiline: False
+		Button
+			id: login_button
+			text: 'Login'
+			func: lambda *args: app.users.login(dict(user_name=usuario.text, password=password.text))
+			on_release: self.func()
+	BoxLayout
+		orientation: 'vertical'
+		RecycleView
+			data: [restaurant for restaurant in (app.restaurants.query_results).values()]
+			viewclass: 'Restaurant'
+			RecycleBoxLayout
+				size_hint_y: None
+				height: self.minimum_height
+				orientation: 'vertical'
+				default_size_hint: 1, None
+				default_size: None, sp(80)
+				spacing: dp(6)
+		TextInput
+			size_hint_y: .1
+			write_tab: False
+			multiline: False
+			on_text_validate: app.restaurants.query(self.text)
+	BoxLayout
+		id: poster
+		get_values: lambda *args: dict(name=name.text, address=address.text, tags=tags.text.split(), location=[22, -101], owner=app.users.cache['id'])
+		func: lambda *args: app.restaurants.post(self.get_values())
+		size_hint_x: .3
+		orientation: 'vertical'
+		TextInput
+			id: name
+			hint_text: 'name'
+			write_tab: False
+			multiline: False
+			on_text_validate: poster.func()
+		TextInput
+			id: address
+			hint_text: 'address'
+			write_tab: False
+			multiline: False
+			on_text_validate: poster.func()
+		TextInput
+			hint_text: 'tags'
+			id: tags
+			write_tab: False
+			multiline: False
+			on_text_validate: poster.func()
+		Button
+			text: 'post'
+			on_release: poster.func()
+
+
+<Restaurant@BoxLayout>
+	name: ''
+	Label
+		text: root.name
+

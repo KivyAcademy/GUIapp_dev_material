@@ -1,0 +1,179 @@
+#:import mdtabs kivymd.tabs
+#:import mdcard kivymd.card
+#:import owner_interface owner.owner_interface
+
+<MyRestaurants>
+	BgBoxLayout
+
+<LoginScreen>
+	MDCard
+		size_hint: .8, .8
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		MDTabbedPanel
+			id: tabbedpanel
+			tab_text_color: colors.white
+			tab_text_color_active: colors.white
+			MDTab
+				text: 'Signup'
+				name: 'signup'
+				BoxLayout
+					orientation: 'vertical'
+					SignupForm
+					Widget
+			MDTab
+				text: 'Login'
+				name: 'login'
+				BoxLayout
+					orientation: 'vertical'
+					LoginForm
+					Widget
+			
+<LoginForm>
+	data:
+		{'user_name': user_name.text,
+		'password': password.text}
+	on_execute:
+		self.disabled = True
+		app.user.login(args[1],
+		on_finished=lambda *args: setattr(self, 'disabled', False),
+		on_failure=lambda req, res: app.notify(res),
+		on_success=lambda *args: setattr(app, 'route', 'owner/profile'))
+	padding: dp(20)
+	orientation: 'vertical'
+	MDTextField
+		id: user_name
+		hint_text: 'username'
+		required: True
+	MDTextField
+		id: password
+		hint_text: 'password'
+		password: True
+		required: True
+		on_text_validate: root.trigger()
+	MDRaisedButton
+		text: 'Login'
+		pos_hint: {'right': 1}
+		text_color: colors.white
+		on_release: root.trigger()
+
+<SignupForm>
+	data:
+		{'user_name': user_name.text,
+		'password': password.text,
+		'email': email.text,
+		'verify': verify.text}
+	on_execute:
+		self.disabled = True
+		app.user.post(args[1],
+		on_finished=lambda *args: setattr(self, 'disabled', False),
+		on_success=lambda *args: app.notify('User successfuly created\nProceed to login'),
+		on_failure=lambda req, res: app.notify(res.reason))
+	padding: dp(20)
+	orientation: 'vertical'
+	MDTextField
+		id: user_name
+		hint_text: 'username'
+	MDTextField
+		id: email
+		hint_text: 'email'
+	MDTextField
+		id: password
+		hint_text: 'password'
+		password: True
+	MDTextField
+		id: verify
+		hint_text: 'verify password'
+		password: True
+	MDRaisedButton
+		text: 'Signup'
+		pos_hint: {'right': 1}
+		text_color: colors.white
+		on_release: root.trigger()
+
+<ProfileScreen>
+	MDCard
+		padding: dp(20)
+		spacing: dp(20)
+		orientation: 'vertical'
+		size_hint: .8, .8
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		MDRaisedButton
+			pos_hint: {'left': .9}
+			text: app.translator.translate('logout')
+			on_release:
+				app.user.clear()
+				app.route = 'owner/login'
+		Image
+			source: 'res/empty_owner.png'
+		GVMDLabel
+			font_style: 'Headline'
+			text: app.translator.translate('working1')
+			halign: 'center'
+		GVMDLabel
+			font_style: 'Subhead'
+			text: app.translator.translate('working2')
+			halign: 'center'
+			color: colors.grey700
+
+
+<NotUsingThis@Widget>
+	on_parent: if self.parent: app.restaurants.getmine()
+	ExtraRecycleView
+		_extra_kwargs: {'callback': lambda key: app.notify(key)}
+		pre_data:
+			[catalogue_interface.quickview_presenter(restaurant)
+			for restaurant in (app.restaurants.mine).values()
+			if search.search in owner_interface.search(restaurant)]
+		RecycleGridLayout
+			cols: 1
+			size_hint_y: None
+			height: self.minimum_height + dp(80)
+			viewclass: 'RestaurantSummary'
+			default_size_hint: 1, None
+			default_size: None, sp(100)
+	BoxLayout
+		size_hint: .8, .8
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		orientation: 'vertical'
+		spacing: dp(16)
+		Image
+			source: 'res/empty_owner.png'
+		GVMDLabel
+			font_style: 'Headline'
+			text: app.translator.translate('empty_owner1')
+			halign: 'center'
+		GVMDLabel
+			font_style: 'Subhead'
+			text: app.translator.translate('empty_owner2')
+			halign: 'center'
+			color: colors.grey700
+
+<SearchBar>
+	search: ' '.join((searchfield.text).lower().split())
+	bgcolor: app.theme_cls.primary_color
+	spacing: dp(16)
+	padding: dp(12), dp(4), dp(40), dp(4)
+	orientation: 'horizontal'
+	MDTextField
+		id: searchfield
+		foreground_color: colors.white
+		line_color_focus: colors.white
+		line_color_normal: colors.white
+	IconButton
+		size_hint_x: .1
+		icon: 'close'
+		font_size: sp(28)
+		on_release: searchfield.text = ''; searchfield.focus = True
+	NoFloatLayout
+		Label
+			text: '' if searchfield.text else app.translator.translate('search_here')
+			color: colors.white[:3] + [.8]
+			font_size: searchfield.font_size
+			halign: 'left'
+			valign: 'center'
+			text_size: self.size
+			pos: searchfield.pos
+			size_hint: None, None
+			size: searchfield.size
+
+

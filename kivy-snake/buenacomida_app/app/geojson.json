@@ -1,0 +1,65 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "cross"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.40400695800781,
+          20.65206111092427
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "laundry"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.36280822753906,
+          20.62571545615513
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "circle"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.33122253417969,
+          20.69831560033869
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "religious-jewish"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -103.29002380371092,
+          20.65141858827469
+        ]
+      }
+    }
+  ]
+}

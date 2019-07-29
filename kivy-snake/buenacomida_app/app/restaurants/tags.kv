@@ -1,0 +1,49 @@
+<TagSelector>
+	size_hint_y: None
+	viewclass: 'TagButton'
+	spacing: dp(8)
+	data:
+		[dict(view=self, selected=(tag['name'] in self.selected), **tag)
+		for tag in (app.tags.cache).values()]
+	height: self.minimum_height
+	default_size_hint: None, None
+
+<Tag>
+	language: app.translator.language
+	height: sp(30)
+	width: self._image_width if self.source else self._label_width
+	_label_width: label.texture_size[0] + sp(16)
+	_image_width: image.image_ratio * self.height
+	Label
+		id: label
+		text: root.translated
+		font_size: sp(14)
+		text_size: None, None
+		pos: root.pos
+		size: root.size
+		opacity: 0 if root.source else 1
+		color: colors.white if root.selected else app.theme_cls.primary_color
+		canvas.before:
+			Color
+				rgba: app.theme_cls.primary_color 
+			RoundedRectangle
+				pos: self.pos
+				size: self.size
+				radius: [self.height / 2]
+			Color
+				rgba: [0, 0, 0, 0] if root.selected else colors.white
+			RoundedRectangle
+				pos: [dp(2) + x for x in self.pos]
+				size: [x - dp(4) for x in self.size]
+				radius: [(self.height - dp(2)) / 2]
+	AsyncImage
+		id: image
+		opacity: 1 if root.source else 0
+		source: root.source
+		size_hint: None, None
+		pos: root.pos
+		size: root.size
+
+<TagButton>
+	on_release: self._select_or_deselect(self.name)
+

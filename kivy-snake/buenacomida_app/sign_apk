@@ -1,0 +1,6 @@
+#!/bin/bash
+# sign release apk
+
+version=$1
+echo 'SIGNING APK'
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore Aplicacion.keystore bin/Aplicacion-$version-release-unsigned.apk Aplicacion && echo ALIGNING && zipalign -v 4 bin/Aplicacion-$version-release-unsigned.apk bin/Aplicacion-$version.apk && echo VERIFYING && jarsigner -verify -verbose -certs bin/Aplicacion-$version.apk

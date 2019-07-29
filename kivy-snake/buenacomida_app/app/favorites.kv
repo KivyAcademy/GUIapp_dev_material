@@ -1,0 +1,30 @@
+<FavoriteScreen>
+	Catalogue
+		id: catalogue
+		data:
+			[restaurant for key, restaurant in (app.restaurants.cache).items()
+			if key in (app.user.cache).get('favorites', [])]
+
+<EmptyFavorites>
+	MDCard
+		padding: dp(16)
+		spacing: dp(16)
+		size_hint: .8, .8
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		orientation: 'vertical'
+		Image
+			source: 'res/empty_favorites.png'
+			allow_stretch: True
+		GVMDLabel
+			font_style: 'Headline'
+			text: app.translator.translate('empty_favorites1')
+			halign: 'center'
+		GVMDLabel
+			font_style: 'Subhead'
+			color: colors.grey700
+			text: app.translator.translate('empty_favorites2')
+			halign: 'center'
+
+<FavoriteRouter>
+	favorites: (app.user.cache).get('favorites', [])
+

@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+<MainRouter>
+	BackgroundTexture
+	BoxLayout
+		orientation: 'vertical'
+		ScreenManager
+			id: screenmanager
+		NavBar
+			size_hint_y: .1
+	LanguagePicker
+
+<LanguagePicker@ButtonBoxLayout>
+	#bgcolor: app.theme_cls.primary_color
+	size_hint: None, None
+	size: sp(30), sp(30)
+	pos_hint: {'top': 1, 'right': 1}
+	on_release: app.translator.next_language()
+	Image
+		source: 'res/{}.png'.format(app.translator.language)
+		allow_stretch: True
+
+<NavBar>
+	spacing: dp(4)
+	bgcolor: colors.white
+	texture_color: [.5, .5, .5, .4]
+	texture: 's_bt'
+	texture_pos: self.x, self.top
+	texture_size: self.width, dp(5)
+	NavButton
+		route: 'search'
+		set_route: 'search'
+	NavButton
+		route: 'favorites'
+		set_route: 'favorites' if (app.user.cache).get('favorites', []) else 'favorites/empty'
+	NavButton
+		route: 'about'
+		set_route: 'about'
+	NavButton
+		id: owner
+		route: 'owner'
+		set_route: 'owner/profile' if app.user.cache else 'owner/login'
+
+<NotUsing@Widget>
+	NoFloatLayout
+		Label
+			opacity: 1 * (not app.user.cache)
+			size_hint: None, None
+			size: sp(16), sp(16)
+			font_size: sp(14)
+			x: owner.x + owner.width * .6
+			y: root.height * .7
+			canvas.before:
+				Color
+					rgba: colors.red500
+				Ellipse
+					size: self.size
+					pos: self.pos
+			text: '!'
+			bold: True
+			color: colors.white
+	
+
+<NavButton>
+	padding: dp(4)
+	isactive: self.route == app.mainroute
+	orientation: 'vertical'
+	on_release: app.route = self.set_route
+	app_color: app.theme_cls.primary_color
+	canvas:
+		Color
+			rgba: root.app_color[:3] + [root._alpha]
+		Rectangle
+			pos: self.pos
+			size: self.width, sp(4)
+	Label
+		font_name: 'Icons'
+		color: root.color
+		font_size: sp(28) + sp(4) * root._alpha
+		text: root.icon
+		halign: 'center'
+	Label
+		color: root.color
+		size_hint_y: None
+		height: sp(20)
+		font_size: sp(12) + sp(2) * root._alpha
+		text: app.translator.translate(root.route).title()
+		halign: 'center'
+
+

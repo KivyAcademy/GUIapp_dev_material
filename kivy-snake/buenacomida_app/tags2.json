@@ -1,0 +1,149 @@
+[
+    {
+		"name": "Tacos",
+        "translation": {
+            "english": "Tacos",
+            "espanol": "Tacos"
+        }
+    },
+    {
+		"name": "Pizza",
+        "translation": {
+            "english": "Pizza",
+            "espanol": "Pizza"
+        }
+    },
+    {
+		"name": "Hamburgers, Hot Dogs",
+        "translation": {
+            "english": "Hamburgers, Hot Dogs",
+            "espanol": "Hamburguesas, Hot Dogs"
+        }
+    },
+    {
+		"name": "Traditional Mexican",
+        "translation": {
+            "english": "Traditional Mexican",
+            "espanol": "Tradicional"
+        }
+    },
+    {
+		"name": "Modern Mexican",
+        "translation": {
+            "english": "Modern Mexican",
+            "espanol": "Moderna"
+        }
+    },
+    {
+		"name": "Northern Mexican",
+        "translation": {
+            "english": "Northern Mexican",
+            "espanol": "Norteña"
+        }
+    },
+    {
+		"name": "Italian ",
+        "translation": {
+            "english": "Italian ",
+            "espanol": "Italiana"
+        }
+    },
+    {
+		"name": "Argentinian",
+        "translation": {
+            "english": "Argentinian",
+            "espanol": "Argentina"
+        }
+    },
+    {
+		"name": "Japanese",
+        "translation": {
+            "english": "Japanese",
+            "espanol": "Japonesa"
+        }
+    },
+    {
+		"name": "Vietnamese",
+        "translation": {
+            "english": "Vietnamese",
+            "espanol": "Vietnamita"
+        }
+    },
+    {
+		"name": "Chinese",
+        "translation": {
+            "english": "Chinese",
+            "espanol": "China"
+        }
+    },
+    {
+		"name": "Thai",
+        "translation": {
+            "english": "Thai",
+            "espanol": "Tailandesa"
+        }
+    },
+    {
+		"name": "Fusion",
+        "translation": {
+            "english": "Fusion",
+            "espanol": "Fusión"
+        }
+    },
+    {
+		"name": "Tortas, Sandwiches",
+        "translation": {
+            "english": "Tortas, Sandwiches",
+            "espanol": "Tortas, Sandwiches"
+        }
+    },
+    {
+		"name": "Vegetarian",
+        "translation": {
+            "english": "Vegetarian",
+            "espanol": "Vegetariana"
+        }
+    },
+    {
+		"name": "Breakfast & Lunch",
+        "translation": {
+            "english": "Breakfast & Lunch",
+            "espanol": "Desayunos"
+        }
+    },
+    {
+		"name": "Cafeteria",
+        "translation": {
+            "english": "Cafeteria",
+            "espanol": "Café"
+        }
+    },
+    {
+		"name": "Seafood",
+        "translation": {
+            "english": "Seafood",
+            "espanol": "Mariscos"
+        }
+    },
+    {
+		"name": "Central/South American",
+        "translation": {
+            "english": "Central/South American",
+            "espanol": "Sur y centro"
+        }
+    },
+    {
+		"name": "Caribbean",
+        "translation": {
+            "english": "Caribbean",
+            "espanol": "Del Caribe"
+        }
+    },
+    {
+		"name": "European",
+        "translation": {
+            "english": "European",
+            "espanol": "Europea"
+        }
+    }
+]

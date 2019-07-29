@@ -1,0 +1,14 @@
+{
+    "oxxo": {
+		"source": "res/oxxo.png",
+		"id": "oxxo"
+    },
+    "little caesars": {
+		"source": "res/littlecaesars.png",
+		"id": "little caesars"
+    },
+    "fguadalajara": {
+		"source": "res/fguadalajara.jpg",
+		"id": "fruit"
+    }
+}

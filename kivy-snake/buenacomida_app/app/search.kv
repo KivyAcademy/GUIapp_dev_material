@@ -1,0 +1,154 @@
+<SearchScreen>
+	location: catalogue.ids._map.lat, catalogue.ids._map.lon
+	app_location: app.location_handler.location
+	query_string: ' '.join((searchbar.text).lower().split())
+	on_filters_open: if self.filters_open: catalogue.close()
+	BoxLayout
+		orientation: 'vertical'
+		HeightlessBox
+			orientation: 'horizontal'
+			padding: dp(12), dp(4), dp(40), dp(4)
+			spacing: dp(16)
+			bgcolor: app.theme_cls.primary_color
+			MDTextField
+				id: searchbar
+				on_text_validate: root.search()
+				on_focus: if self.focus: root.filters_open = True
+				color_mode: 'custom'
+				foreground_color: colors.white
+				line_color_focus: colors.white
+				line_color_normal: colors.white
+			IconButton
+				size_hint_x: .1
+				icon: 'close'
+				font_size: sp(28)
+				on_release: searchbar.text = ''; searchbar.focus = True
+		NoFloatLayout
+			Label
+				text: '' if searchbar.text else app.translator.translate('search_here')
+				color: colors.white[:3] + [.8]
+				font_size: searchbar.font_size
+				halign: 'left'
+				valign: 'center'
+				text_size: self.size
+				pos: searchbar.pos
+				size_hint: None, None
+				size: searchbar.size
+		Catalogue
+			id: catalogue
+			data: [restaurant for restaurant in (app.restaurants.query_results).values()]
+	ButtonBoxLayout
+		id: filterbox
+		open: root.filters_open
+		_top: catalogue.top if self.open else (0 - self.height)
+		on_open: Animation(top=self._top, d=root._anim_duration).start(self)
+		size_hint_y: None
+		height: catalogue.height
+		y: 0 - self.height
+		bgcolor: colors.white
+		NoFloatLayout
+			BackgroundTexture
+				size_hint: None, None
+				size: filterbox.size
+				pos: filterbox.pos
+		ScrollView
+			HeightlessBox
+				padding: dp(8), dp(16)
+				spacing: dp(16)
+				height: self.minimum_height + dp(80)
+				TagFilter
+					id: tag_filter
+				PriceFilter
+					id: price_filter
+				Widget
+		NoFloatLayout
+			MDFloatingActionButton
+				id: fab
+				right: root.right - dp(20)
+				icon: 'magnify'
+				y: filterbox.y + dp(20)
+				md_bg_color: app.theme_cls.primary_color
+				background_palette: 'Primary'
+				on_release: root.search()
+	BgBoxLayout
+		id: loading
+		opacity: 0
+		bgcolor: colors.grey300
+		bg_radius: [dp(2)] * 4
+		padding: dp(2)
+		size_hint: None, None
+		size: sp(80), sp(80)
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		BgBoxLayout
+			padding: dp(8)
+			bgcolor: colors.white
+			Loading
+	
+
+<FilterBase>
+	padding: dp(12)
+	spacing: dp(8)
+	size_hint_y: None
+	height: self.minimum_height
+	orientation: 'vertical'
+	GVMDLabel
+		text: app.translator.translate(root.filter_id)
+		font_style: 'Subhead'
+		color: colors.grey700
+	NoFloatLayout
+		IconButton
+			top: root.top - dp(8)
+			right: root.right - dp(8)
+			size_hint: None, None
+			size: sp(30), sp(30)
+			icon: 'filter-remove'
+			color: app.theme_cls.primary_color
+			on_release: root.clear()
+
+<TagFilter>
+	filter_id: 'by_tags'
+	query:
+		self._query_base.format(' OR '.join(('"{}"'.format(tag)
+		for tag in ts.selected))) if ts.selected else ''
+	TagSelector
+		id: ts
+		size_hint_y: None
+		height: self.minimum_height
+
+<PriceFilter>
+	filter_id: 'by_price'
+	HeightlessBox
+		orientation: 'horizontal'
+		bgcolor: colors.grey300
+		padding: dp(2)
+		spacing: dp(2)
+		bg_radius: [dp(4)]
+		PriceButton
+			id: pb1
+			bg_radius: [dp(2), 0, 0, dp(2)]
+			value: 1
+			on_release: root.calculate_query()
+		PriceButton
+			id: pb2
+			value: 2
+			on_release: root.calculate_query()
+		PriceButton
+			id: pb3
+			value: 3
+			on_release: root.calculate_query()
+		PriceButton
+			id: pb4
+			value: 4
+			bg_radius: [0, dp(2), dp(2), 0]
+			on_release: root.calculate_query()
+
+<PriceButton>
+	background_color: 0, 0, 0, 0
+	color: colors.white if self.state == 'down' else app.theme_cls.primary_color
+	font_size: sp(16)
+	on_value: self.text = '$' * self.value
+	bgcolor: colors.white if self.state == 'normal' else app.theme_cls.primary_color
+	size_hint_y: None
+	height: dp(30)
+
+

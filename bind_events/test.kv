@@ -1,0 +1,79 @@
+#:kivy 1.11.1
+
+<TreeViewLabel>:
+    on_touch_down:
+        app.root.stateName.text = self.text
+        app.root.select_node(self)
+        app.root.popup.dismiss()
+
+<TreeviewGroup>:
+    id: treeview
+    treeview: treeview
+    title: "Select City"
+    size_hint: None, None
+    size: 400, 400
+    auto_dismiss: False
+
+    BoxLayout
+        orientation: "vertical"
+        #TextInput:
+            #id: ti
+            #size_hint_y: .1
+            #on_text: root.filter(self.text)
+        BoxLayout:
+            id: treeview
+            #on_press: root.select_node(self.text)
+        Button:
+            size_hint: 1, 0.1
+            text: "Close"
+            on_release: root.dismiss()
+
+
+<CustomLabel@Label>:
+    text_size: self.size
+    valign: "middle"
+    padding_x: 5
+
+<SingleLineTextInput@TextInput>:
+    multiline: False
+
+<GreenButton@Button>:
+    background_color: 1, 1, 1, 1
+    size_hint_y: None
+    height: self.parent.height * 0.150
+
+GroupScreen:
+    stateName: stateName
+
+    GridLayout:
+        cols: 2
+        padding : 30,30
+        spacing: 10, 10
+        row_default_height: '40dp'
+
+        CustomLabel:
+            text: 'State Name'
+
+        SingleLineTextInput:
+            id: stateName
+            on_text: root.display_groups(self)
+
+        CustomLabel:
+            text: 'State Code'
+
+        CustomLabel:
+            text: root.statecode
+
+
+        GreenButton:
+            text: 'Ok'
+            #on_press: root.insert_data(stateName.text, cityName.text, shortName.text , pinCode.text)
+
+
+        GreenButton:
+            text: 'Cancel'
+            on_press: app.stop()
+
+        Label:
+
+        Label:

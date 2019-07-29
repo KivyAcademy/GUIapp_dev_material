@@ -1,0 +1,34 @@
+<AboutScreen>
+	MDCard
+		size_hint: .8, .8
+		pos_hint: {'center_x': .5, 'center_y': .5}
+		ScrollView
+			HeightlessBox
+				padding: dp(16)
+				spacing: dp(12)
+				AboutLabel
+					text: app.translator.translate('about_us1')
+				AboutLabel
+					text: app.translator.translate('about_us2')
+				LinkLabel
+					text: 'www.buenacomida.mx'
+				Widget
+				AboutLabel
+					text: app.translator.translate('about_us3')
+				Widget
+				AboutLabel
+					text: app.translator.translate('about_us4')
+				LinkLabel
+					text: 'www.mexicanebooks.com'
+
+<LinkLabel@ButtonBehavior+GVMDLabel>
+	on_release: open_link(self.text)
+	font_style: 'Subhead'
+	halign: 'center'
+	color: app.theme_cls.primary_color
+			
+<AboutLabel@GVMDLabel>
+	font_style: 'Subhead'
+	halign: 'center'
+	color: colors.grey700
+

@@ -1,0 +1,43 @@
+#:import Clock kivy.clock.Clock
+#:import mdsubclasses kivyrt.mdsubclasses
+#:import colors kivyrt.colors.colors
+#:import mdtextfield kivymd.textfields
+#:import datamap catalogue.datamap
+#:import open_link kivyrt.open_link.open_link
+#:import _tags restaurants.tags
+#:set gratio 1.61803398875
+
+<TextInput>
+	write_tab: False
+	password_mask: u'\u2022' 
+
+<MDTextField>
+	error_code: ''
+	helper_text: app.translator.translate(self.error_code)
+	helper_text_mode: 'on_error'
+
+<DataMap>
+	viewclass: 'MapMarker'
+	zoom: 11
+
+<SummaryList>
+    bgcolor: colors.white
+	viewclass: 'RestaurantSummary'
+	show_text: '{} ({})'.format(app.translator.translate('show_list').upper(), len(self.data))
+	default_size: None, sp(110)
+	default_size_hint: 1, None
+
+<Separator>
+	bgcolor: colors.grey300
+
+<BackgroundTexture@Image>
+	source: 'res/background.png'
+	color: app.theme_cls.primary_color[:3] + [.2]
+	size_hint_x: None
+	width: self.height * self.image_ratio
+	allow_stretch: True
+
+<Loading@Image>
+	source: 'res/search.zip'
+	anim_delay: .08
+

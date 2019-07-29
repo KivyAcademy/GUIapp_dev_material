@@ -1,0 +1,41 @@
+#:import catalogue_interface catalogue.interface
+
+<Catalogue>
+	DataMap
+		id: _map
+		viewclass: 'RestaurantMarker'
+		clear_callback: lambda *args: summary_list.setter('current_key')(None, '')
+		_extra_kwargs: {'callback': lambda key: summary_list.setter('current_key')(self, key)}
+		data:
+			[catalogue_interface.marker_interface(restaurant)
+			for restaurant in root.data]
+	FloatLayout
+		MDCard
+			id: gs
+			size_hint: None, None
+			width: root.width * .6
+			height: sp(50)
+			padding: dp(5)
+			pos_hint: {'top': .98, 'right': .90}
+			bgcolor: colors.white
+		MDTextField
+			id: gotofield
+			hint_text: app.translator.translate('go_somewhere')
+			x: gs.x + dp(5)
+			top: gs.top - dp(5)
+			size_hint_x: None
+			width: gs.width - dp(16)
+			on_text_validate: root.go_to(gotofield.text)
+		MDFloatingActionButton
+			md_bg_color: app.theme_cls.primary_color
+			center_x: gs.right
+			center_y: gs.center_y
+			background_palette: 'Primary'
+			icon: 'earth'
+			on_release: root.go_to(gotofield.text)
+	SummaryList
+		id: summary_list
+		max_height: root.height
+		_extra_kwargs: {'callback': self.open_detail}
+		data: root.data
+
